@@ -75,6 +75,8 @@ with col1:
     with tempfile.NamedTemporaryFile(suffix=".html", delete=False) as f:
         html_path = f.name
         
+    # Memaksa PyVista untuk mem-build HTML secara luring (offline) tanpa Jupyter UI
+    pv.global_theme.trame.jupyter_server_name = 'test' # Mock parameter
     plotter.export_html(html_path)
     
     with open(html_path, 'r') as f:
