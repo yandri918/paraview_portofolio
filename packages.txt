@@ -1,0 +1,3 @@
+# Dependensi sistem operasi (Ubuntu/Linux) yang dibutuhkan VTK & PyVista di Streamlit Cloud
+libgl1-mesa-glx
+xvfb
