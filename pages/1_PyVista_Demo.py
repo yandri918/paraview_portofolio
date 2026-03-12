@@ -1,9 +1,13 @@
 import streamlit as st
 import pyvista as pv
 import numpy as np
+import tempfile
+import streamlit.components.v1 as components
 import os
-from stpyvista import stpyvista
 
+# Sangat Penting untuk Streamlit Cloud (Linux Headless): 
+# Ini akan mengaktifkan virtual display OS secara otomatis 
+pv.start_xvfb()
 
 st.set_page_config(page_title="PyVista Demo", page_icon="🌪️", layout="wide")
 
@@ -11,7 +15,7 @@ st.title("🌪️ Rendering 3D Interaktif dengan PyVista")
 st.markdown(
     """
     Di halaman ini, kita mereplikasi fungsionalitas rendering ilmiah (seperti ParaView) 
-    langsung di dalam browser menggunakan **PyVista** dan **VTK**.
+    langsung di dalam browser menggunakan **PyVista** dan **VTK.js**.
     """
 )
 
@@ -42,8 +46,8 @@ def generate_3d_wave(res):
 mesh = generate_3d_wave(resolution)
 
 # --- 1. SETUP PLOTTER (RENDERER) ---
-# Di sinilah "magic" VTK/ParaView terjadi
-plotter = pv.Plotter(window_size=[800, 600])
+# Menggunakan off_screen=True karena kita berjalan di Cloud Server (tanpa monitor)
+plotter = pv.Plotter(window_size=[800, 600], off_screen=True)
 plotter.background_color = "white"
 
 # Tambahkan mesh ke plotter
@@ -59,15 +63,25 @@ plotter.add_mesh(
 # Tampilkan widget sumbu koordinat
 plotter.add_axes()
 
-# --- 2. RENDER KE STREAMLIT ---
-# Render komponen stpyvista di dalam container st.columns untuk layout yang rapi
+# --- 2. RENDER KE STREAMLIT MENGGUNAKAN NATIVE HTML EXPORT ---
 col1, col2 = st.columns([3, 1])
 
 with col1:
     st.markdown("### Interactive View")
     st.info("💡 **Coba interaksi berikut:** Klik kiri (tahan & geser) untuk memutar. Scroll untuk zoom. Klik tengah (tahan) atau Shift+Klik Kiri untuk menggeser *(pan)* model.")
-    # Hasil render stpyvista
-    stpyvista(plotter)
+    
+    # Bypassing stpyvista multiprocessing bug: 
+    # Mengekspor scene PyVista ke format VTK.js HTML secara native, lalu di-embed ke Streamlit.
+    with tempfile.NamedTemporaryFile(suffix=".html", delete=False) as f:
+        html_path = f.name
+        
+    plotter.export_html(html_path)
+    
+    with open(html_path, 'r') as f:
+        html_data = f.read()
+        
+    # Tampilkan di browser pengguna
+    components.html(html_data, height=600, scrolling=False)
 
 with col2:
     st.markdown("### Object Info")
@@ -78,4 +92,4 @@ with col2:
     st.write([round(b, 2) for b in mesh.bounds])
 
 st.markdown("---")
-st.markdown("*Aplikasi dikembangkan sebagai demonstrasi portfolio integrasi engine vtk/pyvista ke web Streamlit.*")
+st.markdown("*Aplikasi dikembangkan sebagai demonstrasi portfolio visualisasi web menggunakan VTK.js dan PyVista Streamlit.*")
