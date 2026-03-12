@@ -1,13 +1,10 @@
 streamlit
 pyvista
 stpyvista
-vtk-osmesa
+vtk
 panel
 bokeh
 jupyter_server
 trame
 trame-vtk
 trame-vuetify
-trame-pyvista
-trame-vuetify
-trame-pyvista
