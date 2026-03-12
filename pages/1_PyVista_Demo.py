@@ -5,8 +5,8 @@ import os
 from stpyvista import stpyvista
 
 # Initialize pyvista backend
-os.environ["PYVISTA_JUPYTER_BACKEND"] = "trame"
-pv.global_theme.jupyter_backend = 'trame'
+os.environ["PYVISTA_JUPYTER_BACKEND"] = "panel"
+pv.global_theme.jupyter_backend = 'panel'
 
 st.set_page_config(page_title="PyVista Demo", page_icon="🌪️", layout="wide")
 
