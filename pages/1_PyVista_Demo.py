@@ -1,7 +1,12 @@
 import streamlit as st
 import pyvista as pv
 import numpy as np
+import os
 from stpyvista import stpyvista
+
+# Initialize pyvista backend
+os.environ["PYVISTA_JUPYTER_BACKEND"] = "trame"
+pv.global_theme.jupyter_backend = 'trame'
 
 st.set_page_config(page_title="PyVista Demo", page_icon="🌪️", layout="wide")
 
